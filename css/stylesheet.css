@@ -126,8 +126,23 @@ nav {
   color: var(--gold);
 }
 
+/* Dropdown arrow indicator on the Services toggle */
+.submenu-toggle::after {
+  content: ' ▾';
+  font-size: 0.7rem;
+  opacity: 0.7;
+  transition: transform 0.25s;
+  display: inline-block;
+}
+
+.submenu-toggle.submenu-open::after {
+  transform: rotate(180deg);
+}
+
 @media (min-width: 769px) {
   .nav-links li:hover > .submenu { display: block; }
+  /* On desktop the .open class isn't used, but reset the arrow on hover */
+  .nav-links li:hover > .submenu-toggle::after { transform: rotate(180deg); }
 }
 
 /* ── Hamburger ── */
@@ -178,6 +193,10 @@ nav {
   .nav-links a { padding: 13px 20px; border-radius: 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
   .submenu {
+    display: block;         /* keep in flow so max-height transition works */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
     position: static;
     background-color: rgba(255,255,255,0.04);
     border: none;
@@ -186,7 +205,7 @@ nav {
     min-width: unset;
   }
 
-  .submenu.open { display: block; }
+  .submenu.open { max-height: 300px; }
 
   .submenu li a { padding: 11px 36px; font-size: 0.85rem; }
 }

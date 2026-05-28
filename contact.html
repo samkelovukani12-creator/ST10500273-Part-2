@@ -100,6 +100,25 @@
       document.getElementById('form-success').style.display = 'block';
       e.target.reset();
     }
+
+    // ── Hamburger ──
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.getElementById('nav-links');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    // ── Mobile submenu toggle ──
+    document.querySelectorAll('.submenu-toggle').forEach(toggle => {
+      toggle.addEventListener('click', e => {
+        if (window.innerWidth <= 768) {
+          e.preventDefault();
+          toggle.nextElementSibling.classList.toggle('open');
+        }
+      });
+    });
   </script>
 </body>
 </html>

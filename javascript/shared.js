@@ -6,26 +6,59 @@
   const navLinks  = document.getElementById('nav-links');
   if (!hamburger || !navLinks) return;
 
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navLinks.classList.toggle('open');
+  function closeNav() {
+    hamburger.classList.remove('active');
+    navLinks.classList.remove('open');
+    // Also close any open submenus
+    document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
+    document.querySelectorAll('.submenu-toggle').forEach(t => t.classList.remove('submenu-open'));
+  }
+
+  hamburger.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = navLinks.classList.contains('open');
+    if (isOpen) {
+      closeNav();
+    } else {
+      hamburger.classList.add('active');
+      navLinks.classList.add('open');
+    }
   });
 
   document.querySelectorAll('.submenu-toggle').forEach(toggle => {
     toggle.addEventListener('click', e => {
+      // On mobile: toggle the submenu open/closed
       if (window.innerWidth <= 768) {
         e.preventDefault();
+        e.stopPropagation();
         const submenu = toggle.nextElementSibling;
-        submenu.classList.toggle('open');
+        const isOpen  = submenu.classList.contains('open');
+
+        // Close all other open submenus first
+        document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
+        document.querySelectorAll('.submenu-toggle').forEach(t => t.classList.remove('submenu-open'));
+
+        if (!isOpen) {
+          submenu.classList.add('open');
+          toggle.classList.add('submenu-open');
+        }
       }
+      // On desktop: CSS :hover handles it — do nothing
     });
   });
 
   // Close nav on outside click
   document.addEventListener('click', e => {
     if (!e.target.closest('.navbar')) {
-      navLinks.classList.remove('open');
-      hamburger.classList.remove('active');
+      closeNav();
+    }
+  });
+
+  // Re-close submenus on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      document.querySelectorAll('.submenu').forEach(s => s.classList.remove('open'));
+      document.querySelectorAll('.submenu-toggle').forEach(t => t.classList.remove('submenu-open'));
     }
   });
 })();
@@ -59,8 +92,9 @@
   function startAuto() { timer = setInterval(next, 4500); }
   function resetAuto()  { clearInterval(timer); startAuto(); }
 
-  // Expose for inline onclick
+  // Expose for inline onclick (gallery.html uses both)
   window.currentSlide = n => { showSlide(n - 1); resetAuto(); };
+  window.changeSlide  = n => { showSlide(idx + n); resetAuto(); };
 
   document.querySelectorAll('.slide-next').forEach(b => b.addEventListener('click', () => { next(); resetAuto(); }));
   document.querySelectorAll('.slide-prev').forEach(b => b.addEventListener('click', () => { prev(); resetAuto(); }));
